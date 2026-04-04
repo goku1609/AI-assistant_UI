@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:profiler/config/theme/app_dimensions.dart';
 
-import '../home/StylePage.dart';
-import '../home/WalletPage.dart';
+import '../../../config/theme/app_colors.dart';
 import '../home/home_screen.dart';
 import '../home/profile_screen.dart';
-import '../home/wardrobe_gallery_page.dart';
+import '../home/recommendation_screen.dart';
+
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -16,80 +15,66 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
 
-  int currentIndex = 0;
+  int _currentIndex = 0;
 
-  final List<Widget> pages = const [
+  final List<Widget> _pages = const [
     HomeScreen(),
-    StylePage(),
-    WardrobeGalleryPage(),
+    GenerateScreen(),
     ProfileScreen(),
   ];
 
-  /// 🔥 Dynamic titles
-  final List<String> titles = [
-    "Home",
-    "Style",
-    "Wardrobe",
-    "Profile",
-  ];
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      /// 🔥 GLOBAL APPBAR
-      appBar: AppBar(
-        title: Text(titles[currentIndex]),
-
-        automaticallyImplyLeading: false,
-        /// 🔥 RIGHT WALLET ICON
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_balance_wallet_outlined),
-            iconSize: AppDimensions.iconL,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const WalletPage(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-
-      /// 🔥 BODY
+      backgroundColor: Colors.black,
       body: IndexedStack(
-        index: currentIndex,
-        children: pages,
+        index: _currentIndex,
+        children: _pages,
       ),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: const Color(0xFF0A0A0A),
+          selectedItemColor: AppColors.authHeroAccent,
+          unselectedItemColor: Colors.white38,
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: const TextStyle(fontSize: 12),
+          items: const [
 
-      /// 🔥 BOTTOM NAV
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: (i) => setState(() => currentIndex = i),
-
-        type: BottomNavigationBarType.fixed,
-
-        items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
             label: "Home",
           ),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.auto_awesome_outlined),
-            label: "Style",
+            activeIcon: Icon(Icons.auto_awesome),
+            label: "Generate",
           ),
+
           BottomNavigationBarItem(
-            icon: Icon(Icons.checkroom),
-            label: "Wardrobe",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
             label: "Profile",
           ),
         ],
+        ),
       ),
     );
   }
