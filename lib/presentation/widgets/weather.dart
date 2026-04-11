@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:profiler/presentation/widgets/smart_weather_card.dart';
 import 'package:provider/provider.dart';
 import '../../data/controller/weather_controller.dart';
-import '../screens/startUp/CalenderPage.dart';
-import 'smart_weather_card.dart';
 
 /// Main weather widget that handles loading states and displays the weather card
 class WeatherWidget extends StatelessWidget {
@@ -16,9 +15,13 @@ class WeatherWidget extends StatelessWidget {
         if (controller.hasData) {
           return Column(
             children: [
-              SmartWeatherCard(
-                info: controller.currentWeather!,
-                isFetchingSuggestion: controller.isFetchingSuggestion,
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: SmartWeatherCard(
+                  info: controller.currentWeather!,
+                  isFetchingSuggestion: controller.isFetchingSuggestion,
+                ),
               ),
               const SizedBox(height: 16),
               // Calendar button

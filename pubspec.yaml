@@ -27,9 +27,14 @@ dependencies:
   shared_preferences: ^2.5.5
   font_awesome_flutter: ^10.7.0
   geolocator: ^10.1.0
-  http: ^1.1.0
   url_launcher: ^6.2.1
   provider: ^6.1.1
+  shimmer: ^3.0.0
+  connectivity_plus: ^6.0.3
+  http: ^1.2.0
+  intl: ^0.19.0
+  table_calendar: ^3.0.9
+  flutter_local_notifications: ^17.0.0
 
 
   # ==================== State Management (Optional) ====================
@@ -80,7 +85,7 @@ flutter:
   assets:
     - assets/clothes/
     - assets/icons/apple.png
-    - assets/icons/google.png
+    - assets/images/
 
   #  fonts:
   #    - family: Poppins

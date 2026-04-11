@@ -1,27 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:profiler/presentation/screens/navigation/main_navigation.dart';
+import 'package:profiler/presentation/widgets/no_internet_widget.dart';
 import 'package:provider/provider.dart';
-import 'data/controller/user_controller.dart';
 import 'data/controller/weather_controller.dart';
-import 'presentation/screens/home/home_screen.dart';
+import 'data/network/internet_provider.dart';
+import 'data/network/no_internet_startup_screen.dart';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Create controllers and start pre-fetching IMMEDIATELY
-  final weatherController = WeatherController(); // This starts fetching weather
-  final userController = UserController(); // This loads user data
+  final connectivityResult = await Connectivity().checkConnectivity();
+
+  final hasInternet = connectivityResult != ConnectivityResult.none;
+
+  // ✅ Lock app to portrait only
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
   runApp(
     MultiProvider(
       providers: [
-        // Provide controllers to the entire app
-        ChangeNotifierProvider.value(value: weatherController),
-        ChangeNotifierProvider.value(value: userController),
+        ChangeNotifierProvider(create: (_) => InternetProvider()),
+        ChangeNotifierProvider(create: (_) => WeatherController()),
       ],
-      child: const WardrobeApp(),
+      child: hasInternet
+          ? const WardrobeApp()
+          : const NoInternetApp(), // 👈 IMPORTANT
     ),
   );
+}
+
+class NoInternetApp extends StatelessWidget {
+  const NoInternetApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: NoInternetStartupScreen(),
+    );
+  }
 }
 
 class WardrobeApp extends StatelessWidget {
@@ -29,6 +51,8 @@ class WardrobeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final internet = context.watch<InternetProvider>();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Victus One',
@@ -36,7 +60,9 @@ class WardrobeApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Poppins', // Optional: Add custom font
       ),
-      home: const MainNavigation(),
+      home: NoInternetScreen(
+        child: const MainNavigation(), // your app
+      ),
     );
   }
 }

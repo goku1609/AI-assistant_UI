@@ -47,7 +47,6 @@ class _MainNavigationState extends State<MainNavigation> {
           onTap: _onTabTapped,
           type: BottomNavigationBarType.fixed,
           backgroundColor: const Color(0xFF0A0A0A),
-          selectedItemColor: AppColors.authHeroAccent,
           unselectedItemColor: Colors.white38,
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.w600,

@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Wait for initial weather fetch (max 2 seconds)
     final controller = context.read<WeatherController>();
     await Future.wait([
-      controller.loadFromCache(),
+      // controller.loadFromCache(),
       Future.delayed(const Duration(seconds: 1)), // Minimum splash duration
     ]);
 

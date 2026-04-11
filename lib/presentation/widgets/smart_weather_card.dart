@@ -27,7 +27,7 @@ class SmartWeatherCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: isDay
               ? [const Color(0xFFFFD54F), const Color(0xFFFFA000)]
-              : [AppColors.authSocialLabel, const Color(0xFF1B263B)],
+              : [const Color(0xFF1B263B), const Color(0xFF0D1B2A)],
         ),
         boxShadow: [
           BoxShadow(

@@ -1,61 +1,77 @@
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'StartUpInfo.dart';
 
 class StartupInfoService {
   Future<StartupInfo> fetchStartupInfo() async {
-    final position = await _getCurrentLocation();
+    try {
+      // 🌍 Step 1: IP-based location
+      final ipData = await _fetchIPLocation();
 
-    final weatherData = await _fetchWeatherData(
-      latitude: position.latitude,
-      longitude: position.longitude,
-    );
+      final latitude = ipData['lat'];
+      final longitude = ipData['lon'];
 
-    final addressData = await _fetchReadableAddress(
-      latitude: position.latitude,
-      longitude: position.longitude,
-    );
+      // 🌤 Step 2: Weather
+      final weatherData = await _fetchWeatherData(
+        latitude: latitude,
+        longitude: longitude,
+      );
 
-    final Map<String, dynamic> current = weatherData['current'] is Map
-        ? Map<String, dynamic>.from(weatherData['current'])
-        : {};
+      final current = Map<String, dynamic>.from(weatherData['current'] ?? {});
 
-    final landmarkOrCircle = addressData['locality'] ??
-        addressData['principalSubdivision'] ??
-        'Unknown place';
+      // 🧠 Step 3: Build UI data
+      final city = ipData['city'] ?? 'Unknown city';
+      final state = ipData['regionName'] ?? 'Unknown state';
+      final country = ipData['country'] ?? 'Unknown country';
 
-    final area =
-        addressData['locality'] ?? addressData['city'] ?? 'Unknown area';
-    final city =
-        addressData['city'] ?? addressData['locality'] ?? 'Unknown city';
-    final state = addressData['principalSubdivision'] ?? 'Unknown state';
-    final country = addressData['countryName'] ?? 'Unknown country';
+      final fullAddress = "$city, $state, $country";
 
-    final fullAddress = [
-      addressData['locality'],
-      addressData['city'],
-      addressData['principalSubdivision'],
-      addressData['countryName'],
-    ].where((e) => e != null && e.toString().isNotEmpty).join(', ');
+      final localTime = _cleanDateTimeText(current['time'] ?? '');
 
-    final localTime = _cleanDateTimeText(current['time'] ?? '');
-
-    return StartupInfo(
-      landmarkOrCircle: landmarkOrCircle,
-      area: area,
-      city: city,
-      state: state,
-      country: country,
-      fullAddress: fullAddress.isEmpty ? 'Unknown location' : fullAddress,
-      timezone: weatherData['timezone'] ?? 'Unknown',
-      timezoneAbbreviation: weatherData['timezone_abbreviation'] ?? '',
-      localTime: localTime,
-      isDay: ((current['is_day'] ?? 0) as num).toInt() == 1,
-      temperature: (current['temperature_2m'] ?? '').toString(),
-    );
+      return StartupInfo(
+        landmarkOrCircle: city,
+        area: city,
+        city: city,
+        state: state,
+        country: country,
+        fullAddress: fullAddress,
+        timezone: weatherData['timezone'] ?? 'Unknown',
+        timezoneAbbreviation: weatherData['timezone_abbreviation'] ?? '',
+        localTime: localTime,
+        isDay: ((current['is_day'] ?? 0) as num).toInt() == 1,
+        temperature: (current['temperature_2m'] ?? '').toString(),
+      );
+    } catch (e) {
+      // 🔥 NEVER CRASH — return fallback data
+      return StartupInfo(
+        landmarkOrCircle: 'Unknown',
+        area: 'Unknown',
+        city: 'Unknown',
+        state: 'Unknown',
+        country: 'Unknown',
+        fullAddress: 'Unable to fetch location',
+        timezone: 'Unknown',
+        timezoneAbbreviation: '',
+        localTime: 'Unknown',
+        isDay: true,
+        temperature: '25',
+        outfitSuggestion: '',
+      );
+    }
   }
 
+  /// 🌍 IP location API
+  Future<Map<String, dynamic>> _fetchIPLocation() async {
+    final response = await http.get(Uri.parse('http://ip-api.com/json/'));
+
+    if (response.statusCode != 200) {
+      throw Exception('IP location failed');
+    }
+
+    return jsonDecode(response.body);
+  }
+
+  /// 🌤 Weather API (Open-Meteo)
   Future<Map<String, dynamic>> _fetchWeatherData({
     required double latitude,
     required double longitude,
@@ -72,47 +88,12 @@ class StartupInfoService {
     );
 
     final response = await http.get(uri);
+
     if (response.statusCode != 200) {
-      throw Exception('Weather API error: ${response.statusCode}');
+      throw Exception('Weather API failed');
     }
+
     return jsonDecode(response.body);
-  }
-
-  Future<Map<String, dynamic>> _fetchReadableAddress({
-    required double latitude,
-    required double longitude,
-  }) async {
-    final uri = Uri.parse(
-      'https://api.bigdatacloud.net/data/reverse-geocode-client'
-      '?latitude=$latitude&longitude=$longitude&localityLanguage=en',
-    );
-
-    final response = await http.get(uri);
-    if (response.statusCode != 200) {
-      throw Exception('Location API error: ${response.statusCode}');
-    }
-    return jsonDecode(response.body);
-  }
-
-  Future<Position> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      throw Exception('Location services are disabled');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        throw Exception('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      throw Exception('Location permissions are permanently denied');
-    }
-
-    return await Geolocator.getCurrentPosition();
   }
 
   String _cleanDateTimeText(String value) {

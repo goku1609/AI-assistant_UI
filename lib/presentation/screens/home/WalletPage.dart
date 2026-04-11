@@ -14,12 +14,10 @@ class _WalletpageState extends State<WalletPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Wallet"),centerTitle: true,),
-      body: Center(
-        child:
-            Text("Pavan Please Implement this page", style: AppTextStyles.headingMedium,),
-
+        appBar: AppBar(
+          title: const Text("Wallet"),
+          centerTitle: true,
         ),
-      );
+        body: Center());
   }
 }

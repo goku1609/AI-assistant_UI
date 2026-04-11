@@ -134,7 +134,6 @@ class _WardrobeGalleryPageState extends State<WardrobeGalleryPage> {
         onPressed: _showPicker,
         child: const Icon(Icons.add),
         foregroundColor: Colors.white,
-        backgroundColor: AppColors.authSocialLabel,
       ),
     );
   }
