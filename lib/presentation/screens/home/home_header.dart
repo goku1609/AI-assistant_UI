@@ -33,13 +33,13 @@ class HomeHeader extends StatelessWidget {
               children: [
                 const Text(
                   "Good Morning,",
-                  style: TextStyle(color: AppColors.textSecondary),
+                  style: TextStyle(color: Colors.white),
                 ),
                 const SizedBox(height: 4),
                 const Text(
                   "Himanshu",
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
@@ -509,64 +509,63 @@ class OutfitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Column(
-          children: [
-            // 🔥 Bottom Section
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 14,
-              ),
-              decoration: const BoxDecoration(
-                color: Color(0xFFEAEAEA),
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(28),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Text
-                  const Text(
-                    "Today's Outfit",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
 
-                  // Icon Button
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: IconButton(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28), // 🔥 MAIN FIX
+
+        child: Container(
+          color: const Color(0xFFF5F5F5),
+
+          child: Column(
+            children: [
+              /* ================= TOP SECTION ================= */
+
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                decoration: const BoxDecoration(
+                  color: AppColors.softTeal300,
+                ),
+
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Today's Outfit",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+
+                    Row(
+                      children: [
+                        /* 👁 VIEW BUTTON */
+                        IconButton(
+                          icon: const FaIcon(FontAwesomeIcons.eye),
                           onPressed: () {
                             showDialog(
                               context: context,
                               barrierColor: Colors.transparent,
-                              // no dark background
                               builder: (context) {
                                 return Stack(
                                   children: [
-                                    // Position popup near button (center-right style)
                                     Positioned(
-                                      top: 200, // adjust as needed
-                                      right: 20, // adjust as needed
+                                      top: 200,
+                                      right: 20,
                                       child: Material(
                                         color: Colors.transparent,
                                         child: Container(
                                           width: 260,
-                                          padding: const EdgeInsets.all(12),
+                                          padding:
+                                          const EdgeInsets.all(12),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(14),
+                                            borderRadius:
+                                            BorderRadius.circular(14),
                                             boxShadow: const [
                                               BoxShadow(
                                                 blurRadius: 10,
@@ -575,48 +574,50 @@ class OutfitCard extends StatelessWidget {
                                             ],
                                           ),
                                           child: Column(
-                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisSize:
+                                            MainAxisSize.min,
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                             children: [
-                                              // Header
                                               Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment
+                                                    .spaceBetween,
                                                 children: [
                                                   const Text(
                                                     "Outfit Info",
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                      FontWeight.bold,
                                                       fontSize: 16,
                                                     ),
                                                   ),
                                                   GestureDetector(
                                                     onTap: () =>
-                                                        Navigator.pop(context),
-                                                    child: const Icon(Icons.close,
-                                                        size: 18),
+                                                        Navigator.pop(
+                                                            context),
+                                                    child: const Icon(
+                                                      Icons.close,
+                                                      size: 18,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
-
                                               const SizedBox(height: 10),
-
                                               const Text(
                                                   "👕 Topwear: Black Hoodie"),
                                               const Text(
                                                   "👖 Bottomwear: Cargo Pants"),
-
                                               const SizedBox(height: 10),
                                               const Divider(),
-
                                               const Text(
                                                 "✨ Accessories",
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.bold),
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                ),
                                               ),
                                               const SizedBox(height: 6),
-
                                               const Text("• Watch"),
                                               const Text("• Sneakers"),
                                               const Text("• Cap"),
@@ -630,39 +631,42 @@ class OutfitCard extends StatelessWidget {
                               },
                             );
                           },
-                          icon: const FaIcon(FontAwesomeIcons.eye),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: IconButton(onPressed: (){}, icon: Icon(
-                            Icons.bookmark_border
-                        ),
-                          iconSize: 40,),
-                      ),
-                      SizedBox(width: 5,),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
 
-            // 🔥 Mannequin Image
-            AspectRatio(
-              aspectRatio: 5 / 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Image.asset(
-                  'assets/images/dummy.webp',
-                  fit: BoxFit.contain,
+                        /* 🔖 BOOKMARK */
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.bookmark_border),
+                          iconSize: 26,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
 
-            const SizedBox(height: 16),
+              /* ================= IMAGE SECTION ================= */
 
-          ],
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(28),
+                ),
+
+                child: AspectRatio(
+                  aspectRatio: 5 / 4,
+                  child: Container(
+                    color: AppColors.wellnessAccentLight, // your bg
+                    child: Image.asset(
+                      'assets/images/dummy.webp',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );

@@ -161,4 +161,61 @@ class AppColors {
   static const iconColor = Color(0xFF8E8E93);
 
   static const shadow = Color(0x14000000); // subtle shadow
+
+  // ========== DEEP SLATE BLUE (Primary Trust) ==========
+  // Base: #2C3E50
+  static const Color slateBlue50 = Color(0xFFE9ECEF);  // very light
+  static const Color slateBlue100 = Color(0xFFCED4DA);
+  static const Color slateBlue200 = Color(0xFFADB5BD);
+  static const Color slateBlue300 = Color(0xFF6C757D);
+  static const Color slateBlue400 = Color(0xFF495057);
+  static const Color slateBlue500 = Color(0xFF2C3E50); // base
+  static const Color slateBlue600 = Color(0xFF243342);
+  static const Color slateBlue700 = Color(0xFF1D2834);
+  static const Color slateBlue800 = Color(0xFF151E26);
+  static const Color slateBlue900 = Color(0xFF0E1419);
+
+  // ========== SOFT TEAL (Secondary / Confidence) ==========
+  // Base: #3A7CA5
+  static const Color softTeal50 = Color(0xFFE6F2F7);
+  static const Color softTeal100 = Color(0xFFCCE5F0);
+  static const Color softTeal200 = Color(0xFF99CBE0);
+  static const Color softTeal300 = Color(0xFF66B0D1);
+  static const Color softTeal400 = Color(0xFF4096BB);
+  static const Color softTeal500 = Color(0xFF3A7CA5); // base
+  static const Color softTeal600 = Color(0xFF2E6384);
+  static const Color softTeal700 = Color(0xFF234A63);
+  static const Color softTeal800 = Color(0xFF173242);
+  static const Color softTeal900 = Color(0xFF0C1921);
+
+  // ========== MUTED SAGE GREEN (Accent / Wellness) ==========
+  // Base: #7DAA92
+  static const Color sageGreen50 = Color(0xFFF2F6F4);
+  static const Color sageGreen100 = Color(0xFFE5EDE9);
+  static const Color sageGreen200 = Color(0xFFCCDBD3);
+  static const Color sageGreen300 = Color(0xFFB2C9BD);
+  static const Color sageGreen400 = Color(0xFF98B7A7);
+  static const Color sageGreen500 = Color(0xFF7DAA92); // base
+  static const Color sageGreen600 = Color(0xFF648875);
+  static const Color sageGreen700 = Color(0xFF4B6658);
+  static const Color sageGreen800 = Color(0xFF32443A);
+  static const Color sageGreen900 = Color(0xFF19221D);
+
+  // ========== SEMANTIC ALIASES (for easier use in your app) ==========
+  static const Color primaryTrust = slateBlue500;
+  static const Color primaryTrustDark = slateBlue700;
+  static const Color primaryTrustLight = slateBlue200;
+
+  static const Color confidenceAccent = softTeal500;
+  static const Color confidenceAccentDark = softTeal700;
+  static const Color confidenceAccentLight = softTeal200;
+
+  static const Color wellnessAccent = sageGreen500;
+  static const Color wellnessAccentDark = sageGreen700;
+  static const Color wellnessAccentLight = sageGreen200;
+
+  // Neutral backgrounds (using slate blue's lightest for calmness)
+  static const Color backgroundLight = slateBlue50;
+  static const Color backgroundCard = Colors.white;
+
 }

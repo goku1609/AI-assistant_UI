@@ -800,6 +800,7 @@ import '../../../config/theme/app_colors.dart';
 import '../../../config/theme/app_dimensions.dart';
 import '../../../data/network/internet_provider.dart';
 import '../../widgets/no_internet_widget.dart';
+import '../../widgets/ripple_background_layer.dart';
 import '../../widgets/weather.dart';
 import 'home_header.dart';
 import 'outfit_planner.dart';
@@ -827,14 +828,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final internet = context.watch<InternetProvider>();
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: isLoading
-            ? const SizedBox.expand(
+      // backgroundColor: AppColors.wellnessAccent,
+      body: Stack(
+        children: [
+          RippleBackgroundLayer(),
+
+            SafeArea(
+              child: isLoading
+                  ? const SizedBox.expand(
                 // ✅ FORCE FULL SCREEN
                 child: Skeleton(),
               )
-            : SingleChildScrollView(
+                  : SingleChildScrollView(
                 child: Column(
                   children: [
                     const HomeHeader(),
@@ -868,6 +873,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+            ),
+        ],
       ),
     );
   }
