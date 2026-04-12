@@ -1,5 +1,5 @@
-name: profiler
-description: "Profiler"
+name: Kaivon
+description: "Kaivon"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -16,12 +16,26 @@ dependencies:
   ## HTTP Networking
   ## Used for API communication with backend
   ## https://pub.dev/packages/http
-  http: ^1.1.0
   cupertino_icons: ^1.0.2
   # Aligned with victus_one (same major as your standalone app)
   flutter_svg: ^2.0.0
   google_fonts: ^8.0.2
   animated_splash_screen: ^1.1.0
+  cached_network_image: ^3.4.1
+  image_picker: ^1.2.0
+  dio: ^5.9.0
+  shared_preferences: ^2.5.5
+  font_awesome_flutter: ^10.7.0
+  geolocator: ^10.1.0
+  url_launcher: ^6.2.1
+  provider: ^6.1.1
+  shimmer: ^3.0.0
+  connectivity_plus: ^6.0.3
+  http: ^1.2.0
+  intl: ^0.19.0
+  table_calendar: ^3.0.9
+  flutter_local_notifications: ^17.0.0
+
 
   # ==================== State Management (Optional) ====================
   ## Uncomment if using provider for state management
@@ -71,7 +85,15 @@ flutter:
   assets:
     - assets/clothes/
     - assets/icons/apple.png
-    - assets/icons/google.png
+    - assets/images/
+
+  #  fonts:
+  #    - family: Poppins
+  #      fonts:
+  #        - asset: assets/fonts/Poppins-Regular.ttf
+  #        - asset: assets/fonts/Poppins-SemiBold.ttf
+  #        - asset: assets/fonts/Poppins-Bold.ttf
+
 
   # ==================== Assets ====================
   # Social auth icons (under assets/icons/)
