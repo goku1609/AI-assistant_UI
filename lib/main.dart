@@ -1,5 +1,7 @@
 import 'package:Kaivon/presentation/notifications/notification.dart';
 import 'package:Kaivon/presentation/screens/auth/welcom_screen.dart';
+import 'package:Kaivon/presentation/screens/home/home_screen.dart';
+import 'package:Kaivon/presentation/screens/navigation/main_navigation.dart';
 import 'package:Kaivon/presentation/widgets/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,7 +68,7 @@ class WardrobeApp extends StatelessWidget {
         fontFamily: 'Poppins', // Optional: Add custom font
       ),
       home: NoInternetScreen(
-        child: const WelcomeScreen(), // your app
+        child: const MainNavigation(), // your app
         // child: MainNavigation(),
       ),
     );

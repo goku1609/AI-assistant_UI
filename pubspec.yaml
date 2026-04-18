@@ -17,6 +17,7 @@ dependencies:
   ## Used for API communication with backend
   ## https://pub.dev/packages/http
   cupertino_icons: ^1.0.2
+  hugeicons: ^1.1.6
 
   # Aligned with victus_one (same major as your standalone app)
   flutter_svg: ^2.0.7

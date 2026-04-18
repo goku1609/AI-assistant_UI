@@ -1,14 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:Kaivon/presentation/screens/home/wardrobe_gallery_page.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../config/theme/app_colors.dart';
+import 'package:Kaivon/config/theme/app_colors.dart';
+
 import '../home/home_screen.dart';
-import '../profile/profile_screen.dart';
 import '../home/recommendation_screen.dart';
+import '../home/wardrobe_gallery_page.dart';
+import '../profile/profile_screen.dart';
+import 'moder_nav_bar.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -23,20 +23,54 @@ class _MainNavigationState extends State<MainNavigation> {
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
 
-  /* ================= IMAGE PICK ================= */
+  late final List<Widget> _pages = [
+    const HomeScreen(),
+    const GenerateScreen(),
+    const WardrobeGalleryPage(),
+    ProfileScreen(
+      onBackToHome: () => setState(() => _currentIndex = 0),
+    ),
+  ];
 
+  // ================= IMAGE PICK =================
   Future<void> _pickImage(ImageSource source) async {
-    final XFile? image = await _picker.pickImage(
-      source: source,
-      imageQuality: 80,
-    );
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+      );
 
-    if (image != null) {
-      setState(() => _selectedImage = File(image.path));
+      if (image == null) return;
+
+      setState(() {
+        _selectedImage = File(image.path);
+      });
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            source == ImageSource.camera
+                ? "Photo captured"
+                : "Image selected",
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: $e"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
-  void _showPicker() {
+  // ================= BOTTOM SHEET =================
+  void _showImageSourcePicker() {
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFFF5F6F7),
@@ -56,6 +90,7 @@ class _MainNavigationState extends State<MainNavigation> {
                   _pickImage(ImageSource.camera);
                 },
               ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.photo_outlined),
                 title: const Text("Gallery"),
@@ -71,65 +106,42 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
-  /* ================= PAGES ================= */
-
-  late final List<Widget> _pages;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _pages = [
-      const HomeScreen(),
-      const GenerateScreen(
-        // onBackToHome: () {
-        //   setState(() {
-        //     _currentIndex = 0;
-        //   });
-        // },
-      ),
-      const WardrobeGalleryPage(
-        // onBackToHome: () {
-        //   setState(() {
-        //     _currentIndex = 0;
-        //   });
-        // },
-      ),
-      ProfileScreen(
-        onBackToHome: () {
-          setState(() {
-            _currentIndex = 0;
-          });
-        },
-      ),
-    ];
-  }
-
-  /* ================= BACK BUTTON HANDLER ================= */
-
+  // ================= BACK HANDLING =================
   Future<bool> _onWillPop() async {
     if (_currentIndex != 0) {
-      // If not on home tab, go back to home tab
-      setState(() {
-        _currentIndex = 0;
-      });
-      return false; // Prevent app from closing
+      setState(() => _currentIndex = 0);
+      return false;
     }
-    // Already on home tab -> allow system to close app (or show dialog)
-    return true;
-  }
 
-  /* ================= UI ================= */
+    return await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Exit App"),
+        content: const Text("Do you want to exit?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Exit"),
+          ),
+        ],
+      ),
+    ) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // We handle back navigation manually
-      onPopInvoked: (bool didPop) async {
+      canPop: false,
+      onPopInvoked: (didPop) async {
         if (!didPop) {
           final shouldPop = await _onWillPop();
-          if (shouldPop) {
-            Navigator.of(context).pop();
+          if (shouldPop && mounted) {
+            Navigator.pop(context);
           }
         }
       },
@@ -142,90 +154,36 @@ class _MainNavigationState extends State<MainNavigation> {
               children: _pages,
             ),
 
-            // Show navbar ONLY on HomeScreen
-            if (_currentIndex == 0)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 16,
-                child: _buildNavBar(),
-              ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 16,
+              child: _buildNavBar(),
+            ),
           ],
         ),
       ),
     );
   }
 
-  /* ================= NAVBAR (Only for Home) ================= */
-
+  // ================= NAV BAR =================
   Widget _buildNavBar() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 18),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      decoration: BoxDecoration(
-        color: Colors.white60,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _navItem(Icons.home_rounded, 0),
-          _navItem(FontAwesomeIcons.wandMagicSparkles, 1),
+    final w = MediaQuery.of(context).size.width;
 
-          /// 📸 CENTER CAMERA
-          GestureDetector(
-            onTap: _showPicker,
-            child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                color: Colors.black38,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
-                  )
-                ],
-              ),
-              child: const Icon(
-                Icons.camera_alt_outlined,
-                color: Colors.white,
-                size: 22,
-              ),
-            ),
-          ),
-
-          _navItem(FontAwesomeIcons.shirt, 2),
-          _navItem(FontAwesomeIcons.user, 3),
-        ],
-      ),
-    );
-  }
-
-  /* ================= NAV ITEM ================= */
-
-  Widget _navItem(IconData icon, int index) {
-    final bool isActive = _currentIndex == index;
-
-    return GestureDetector(
-      onTap: () {
+    return ModernNavigationBar(
+      currentIndex: _currentIndex,
+      onTabChange: (index) {
         setState(() => _currentIndex = index);
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.softTeal200 : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Icon(
-          icon,
-          size: 24,
-          color: Colors.black,
-        ),
-      ),
+      onCameraPressed: _showImageSourcePicker,
+
+      // ✅ NOW FULLY DYNAMIC
+      height: w * 0.18,
+      borderRadius: w * 0.08,
+      elevation: w * 0.02,
+
+      backgroundColor: Colors.black,
+      activeColor: AppColors.softTeal300,
     );
   }
 }
