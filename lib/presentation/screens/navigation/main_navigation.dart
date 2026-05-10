@@ -1,14 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:Kaivon/config/theme/app_colors.dart';
-
 import '../explorer/explorer.dart';
 import '../home/home_screen.dart';
-import '../home/recommendation_screen.dart';
+import '../home/recommendation_screen.dart';   // Make sure this file exists
 import '../home/wardrobe_gallery_page.dart';
-import '../profile/profile_screen.dart';
 import 'moder_nav_bar.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -26,56 +23,25 @@ class _MainNavigationState extends State<MainNavigation> {
 
   late final List<Widget> _pages = [
     const HomeScreen(),
-    const GenerateScreen(),
+    const GenerateScreen(),          // Ensure GenerateScreen is defined
     const WardrobeGalleryPage(),
-    // ProfileScreen(
-    //   onBackToHome: () => setState(() => _currentIndex = 0),
-    // ),
     const Explorer(),
   ];
 
-  // ================= IMAGE PICK =================
   Future<void> _pickImage(ImageSource source) async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: source,
-        imageQuality: 80,
-      );
-
-      if (image == null) return;
-
-      setState(() {
-        _selectedImage = File(image.path);
-      });
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            source == ImageSource.camera
-                ? "Photo captured"
-                : "Image selected",
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error: $e"),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    final XFile? image = await _picker.pickImage(
+      source: source,
+      imageQuality: 80,
+    );
+    if (image == null) return;
+    setState(() {
+      _selectedImage = File(image.path);
+    });
   }
 
-  // ================= BOTTOM SHEET =================
   void _showImageSourcePicker() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFFF5F6F7),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -92,7 +58,6 @@ class _MainNavigationState extends State<MainNavigation> {
                   _pickImage(ImageSource.camera);
                 },
               ),
-              const Divider(),
               ListTile(
                 leading: const Icon(Icons.photo_outlined),
                 title: const Text("Gallery"),
@@ -108,84 +73,20 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
-  // ================= BACK HANDLING =================
-  Future<bool> _onWillPop() async {
-    if (_currentIndex != 0) {
-      setState(() => _currentIndex = 0);
-      return false;
-    }
-
-    return await showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Exit App"),
-        content: const Text("Do you want to exit?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Exit"),
-          ),
-        ],
-      ),
-    ) ??
-        false;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) async {
-        if (!didPop) {
-          final shouldPop = await _onWillPop();
-          if (shouldPop && mounted) {
-            Navigator.pop(context);
-          }
-        }
-      },
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF2F3F5),
-        body: Stack(
-          children: [
-            IndexedStack(
-              index: _currentIndex,
-              children: _pages,
-            ),
-
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 16,
-              child: _buildNavBar(),
-            ),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF2F3F5),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages,
       ),
-    );
-  }
-
-  // ================= NAV BAR =================
-  Widget _buildNavBar() {
-    final w = MediaQuery.of(context).size.width;
-
-    return ModernNavigationBar(
-      currentIndex: _currentIndex,
-      onTabChange: (index) {
-        setState(() => _currentIndex = index);
-      },
-      onCameraPressed: _showImageSourcePicker,
-
-      // ✅ NOW FULLY DYNAMIC
-      height: w * 0.18,
-      borderRadius: w * 0.08,
-      elevation: w * 0.02,
-
-      backgroundColor: Colors.cyan.withOpacity(0.4),
-      activeColor: AppColors.softTeal300,
+      bottomNavigationBar: ModernNavigationBar(
+        currentIndex: _currentIndex,
+        onTabChange: (index) => setState(() => _currentIndex = index),
+        onCameraPressed: _showImageSourcePicker,
+        height: MediaQuery.of(context).size.width * 0.16,
+      ),
     );
   }
 }

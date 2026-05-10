@@ -219,4 +219,19 @@ class AppColors {
   static const Color backgroundCard = Colors.white;
 
   static const Color welcomeScreenColor = Color(0xFFFF5252);
+
+  static const Color shade50  = Color(0xFFF2E9FF); // very light lavender
+  static const Color shade100 = Color(0xFFE0D4FF);
+  static const Color shade200 = Color(0xFFC6B8FF);
+  static const Color shade300 = Color(0xFFAA9CFF);
+  static const Color shade400 = Color(0xFF8C80FF);
+
+  static const Color shade500 = Color(0xFF6F6BFF); // soft violet-indigo (base)
+
+  static const Color shade600 = Color(0xFF5B5FE6);
+  static const Color shade700 = Color(0xFF4850CC);
+  static const Color shade800 = Color(0xFF3541B2);
+  static const Color shade900 = Color(0xFF243199);
+  static const Color shade1000 = Color(0xFF162070); // deep indigo b
+
 }

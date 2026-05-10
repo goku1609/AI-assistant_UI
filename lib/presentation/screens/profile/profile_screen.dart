@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'profile_header.dart';
 import 'profile_sound_toggle.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,46 +16,13 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isSoundEnabled = true;
 
-  // ================= HANDLERS =================
-  void _handleBackPress() => widget.onBackToHome();
+  void _handleEditProfile() {}
+  void _handleHelpSupport() {}
+  void _handlePoints() {}
+  void _handleNotifications() {}
+  void _handleAbout() {}
+  void _handleLogout() {}
 
-  void _handleEditProfile() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Edit Profile")),
-    );
-  }
-
-  void _handleHelpSupport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Help & Support")),
-    );
-  }
-
-  void _handlePoints() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("My Points")),
-    );
-  }
-
-  void _handleNotifications() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Notifications")),
-    );
-  }
-
-  void _handleAbout() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("About")),
-    );
-  }
-
-  void _handleLogout() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Logout")),
-    );
-  }
-
-  // ================= UI =================
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
@@ -69,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: _handleBackPress,
+          onTap: widget.onBackToHome,
           child: Container(
             margin: const EdgeInsets.all(8),
             decoration: const BoxDecoration(
@@ -88,19 +54,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: EdgeInsets.symmetric(horizontal: w * 0.04),
           child: Column(
             children: [
-              SizedBox(height: w * 0.03),
-
-              // PROFILE HEADER
-              ProfileHeader(onBackPress: _handleBackPress),
-
               SizedBox(height: w * 0.05),
 
-              // MENU SECTION
               _buildMenuSection(w),
 
               SizedBox(height: w * 0.05),
 
-              // SOUND TOGGLE
               ProfileSoundToggle(
                 isEnabled: _isSoundEnabled,
                 onToggle: (val) {
@@ -114,11 +73,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ================= MENU =================
   Widget _buildMenuSection(double w) {
     return Column(
       children: [
-        // ===== TOP CARDS =====
         Row(
           children: [
             Expanded(
@@ -141,7 +98,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         SizedBox(height: w * 0.04),
 
-        // ===== FULL WIDTH ITEMS =====
         _FullWidthMenuCard(
           icon: Icons.star,
           title: "My Points",
@@ -177,6 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
+// ================= SMALL CARD =================
 class _MenuCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -195,27 +152,17 @@ class _MenuCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: w * 0.06,
-        ),
+        padding: EdgeInsets.symmetric(vertical: w * 0.06),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
         ),
         child: Column(
           children: [
-            Icon(icon, size: w * 0.08, color: Colors.black87),
+            Icon(icon, size: w * 0.08),
             SizedBox(height: w * 0.02),
             Text(
               title,
-              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: w * 0.035,
                 fontWeight: FontWeight.w600,
@@ -228,6 +175,7 @@ class _MenuCard extends StatelessWidget {
   }
 }
 
+// ================= FULL WIDTH CARD =================
 class _FullWidthMenuCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -256,13 +204,6 @@ class _FullWidthMenuCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -271,7 +212,6 @@ class _FullWidthMenuCard extends StatelessWidget {
               color: isDestructive ? Colors.red : Colors.black87,
             ),
             SizedBox(width: w * 0.04),
-
             Expanded(
               child: Text(
                 title,
@@ -282,11 +222,7 @@ class _FullWidthMenuCard extends StatelessWidget {
                 ),
               ),
             ),
-
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey.shade600,
-            ),
+            const Icon(Icons.chevron_right),
           ],
         ),
       ),

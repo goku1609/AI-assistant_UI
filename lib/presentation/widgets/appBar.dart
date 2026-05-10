@@ -1,19 +1,39 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String? title;
+  final bool showBack;
   final VoidCallback? onBackPress;
+  final List<Widget>? actions;
+  final Color backgroundColor;
 
-  const CustomAppBar({super.key, this.onBackPress});
+  const CustomAppBar({
+    super.key,
+    this.title,
+    this.showBack = false,
+    this.onBackPress,
+    this.actions,
+    this.backgroundColor = Colors.transparent,
+  });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: backgroundColor,
       elevation: 0,
+      centerTitle: true,
+
       automaticallyImplyLeading: false,
 
-      leading: GestureDetector(
-        onTap: onBackPress ?? () => Navigator.pop(context),
+      // ================= BACK BUTTON =================
+      leading: showBack
+          ? GestureDetector(
+        onTap: onBackPress ??
+                () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
         child: Container(
           margin: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
@@ -25,9 +45,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             color: Colors.black,
           ),
         ),
-      ),
+      )
+          : null,
 
-      leadingWidth: 60,
+      leadingWidth: showBack ? 60 : 0,
+
+      // ================= TITLE =================
+      title: title != null
+          ? Text(
+        title!,
+        style: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w600,
+          fontSize: 18,
+        ),
+      )
+          : null,
+
+      // ================= ACTIONS =================
+      actions: actions,
     );
   }
 

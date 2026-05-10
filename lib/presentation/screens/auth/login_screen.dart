@@ -6,6 +6,7 @@ import 'package:Kaivon/presentation/screens/navigation/main_navigation.dart';
 import 'package:flutter/material.dart';
 
 import 'auth_widget.dart';
+import 'otp_screen.dart';
 
 /*
   PIXEL-ACCURATE AUTH UI (WELCOME + LOGIN)
@@ -47,133 +48,101 @@ class AuthContainer extends StatelessWidget {
 
 
 /* ===================== LOGIN SCREEN ===================== */
-
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return AuthContainer(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final w = constraints.maxWidth;
-          final h = constraints.maxHeight;
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
-          return Stack(
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _phoneController = TextEditingController();
+
+  void _sendOtp() {
+    final phone = _phoneController.text.trim();
+
+    if (phone.isEmpty || phone.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Enter valid phone number")),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => OtpScreen(phone: phone, flow: OtpFlow.signup,),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      // backgroundColor: AppColors.background,
+
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              /// 🌟 TOP BACKGROUND (LIMIT HEIGHT ONLY)
-              TopContent(
-                height: h * 0.45, // 🔥 FIX (was h full)
-                width: w,
-                showText: false,
-              ),
-
-              /// 🌊 WAVE (REDUCED HEIGHT)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: BottomWaveCard(
-                  height: h * 0.82, // 🔥 FIX (was 0.8)
+              // 🔹 Title
+              const Text(
+                "Welcome",
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
                 ),
               ),
 
-              /// 📱 CONTENT (SAFE POSITIONING)
-              SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: w * 0.08),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+              const SizedBox(height: 8),
 
-                      SizedBox(height: h * 0.40), // 🔥 FIX ALIGNMENT
+              const Text(
+                "Enter your phone number to continue",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
 
-                      Text(
-                        'Login',
-                        style: TextStyle(
-                          fontSize: w * 0.08,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+              const SizedBox(height: 32),
 
-                      SizedBox(height: h * 0.03),
-
-                      InputField(hint: 'Phone +91', width: w),
-
-                      SizedBox(height: h * 0.02),
-
-                      InputField(
-                        hint: 'enter your password',
-                        width: w,
-                        isPassword: true,
-                      ),
-
-                      Row(
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const ResetPasswordScreen(),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                fontSize: w * 0.03,
-                                color: Colors.redAccent,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      LoginButton(
-                        width: w,
-                        height: h,
-                        text: 'Login',
-                        nextScreen: const MainNavigation(),
-                      ),
-
-                      Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text("Don't have an account"),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const SignUpScreen(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                "Sign Up",
-                                style: TextStyle(
-                                  fontSize: w * 0.04,
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                    ],
+              // 🔹 Phone Input
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: TextField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Phone number",
                   ),
                 ),
               ),
+
+              const SizedBox(height: 24),
+
+              // 🔹 Send OTP Button
+              LoginButton(height: h, width: w,nextScreen: const OtpScreen(phone: "phone", flow: OtpFlow.signup), text: 'Next',),
             ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }
 }
-
 
 
 class LoginButton extends StatelessWidget {

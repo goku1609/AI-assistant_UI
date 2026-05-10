@@ -183,7 +183,7 @@ class _OtpScreenState extends State<OtpScreen> with CodeAutoFill {
       extendBodyBehindAppBar: true, // 🔥 IMPORTANT
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
-        child: CustomAppBar(),
+        child: CustomAppBar( showBack: true,),
       ),
       resizeToAvoidBottomInset: true,
       body: LayoutBuilder(

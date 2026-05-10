@@ -86,66 +86,6 @@ class WelcomeScreen extends StatelessWidget {
   }
 }
 
-/* ===================== COMPONENTS ===================== */
-
-// class ContinueButton extends StatefulWidget {
-//   final double size;
-//
-//   const ContinueButton({super.key, required this.size});
-//
-//   @override
-//   State<ContinueButton> createState() => _ContinueButtonState();
-// }
-//
-// class _ContinueButtonState extends State<ContinueButton> {
-//   bool _schedulerStarted = false;
-//
-//   void _handlePress() async {
-//     // 🔥 TEST NOTIFICATION FIRST
-//     await NotificationService().showTestNotification();
-//
-//     // 🔥 THEN START SCHEDULER
-//     NotificationService().startAutoScheduler(
-//       message: "Your outfit recommendation is ready 👕",
-//     );
-//
-//     // NAVIGATION
-//     Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(builder: (_) => const SignUpScreen()),
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: widget.size,
-//       height: widget.size,
-//       decoration: const BoxDecoration(
-//         color: AppColors.background,
-//         shape: BoxShape.circle,
-//       ),
-//       child: IconButton(
-//         icon: const Icon(Icons.arrow_forward),
-//         color: Colors.white,
-//         onPressed: _handlePress,
-//       ),
-//     );
-//   }
-// }
-
-
-/// Continue Button Component
-///
-/// Button that shows notification before navigation.
-///
-/// Features:
-/// - Proper error handling
-/// - Await notification before navigation
-/// - Loading state feedback
-/// - Responsive sizing
-/// - Animation feedback
-
 
 class ContinueButton extends StatefulWidget {
   final double size;
@@ -182,7 +122,7 @@ class _ContinueButtonState extends State<ContinueButton> {
     // 🚀 3. NAVIGATE IMMEDIATELY
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const SignUpScreen()),
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
     );
 
     setState(() => _loading = false);

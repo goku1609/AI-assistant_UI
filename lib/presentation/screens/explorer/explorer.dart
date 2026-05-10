@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:Kaivon/presentation/widgets/appBar.dart';
 import 'package:flutter/material.dart';
+import 'package:Kaivon/presentation/widgets/appBar.dart';
 
 class Explorer extends StatefulWidget {
   const Explorer({super.key});
@@ -10,7 +10,6 @@ class Explorer extends StatefulWidget {
 }
 
 class _ExplorerState extends State<Explorer> {
-  /// 🔥 SIMULATED BACKEND DATA (assets for now)
   final List<String> _allImages = [
     "assets/images/download (1).jpg",
     "assets/images/download (2).jpg",
@@ -22,30 +21,23 @@ class _ExplorerState extends State<Explorer> {
     "assets/images/images (3).jpg",
   ];
 
-/// FOR API CALL TO FETCH IMAGES FROM BACKEND
-  // Future<List<String>> fetchImagesFromAPI() async {
-  //   final response = await http.get(...);
-  //   return List<String>.from(jsonDecode(response.body));
-  // }
   List<String> images = [];
 
   double _dragX = 0;
   double _dragY = 0;
-
   bool isFetching = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchMoreImages(); // ✅ initial load
+    _fetchMoreImages();
   }
 
-  /// 🔥 SIMULATED API CALL
   Future<void> _fetchMoreImages() async {
     if (isFetching) return;
     isFetching = true;
 
-    await Future.delayed(const Duration(milliseconds: 500)); // simulate API
+    await Future.delayed(const Duration(milliseconds: 500));
 
     List<String> newBatch = List.generate(
       15,
@@ -86,7 +78,6 @@ class _ExplorerState extends State<Explorer> {
       _dragY = 0;
     });
 
-    /// 🔥 AUTO FETCH WHEN LOW
     if (images.length <= 4) {
       _fetchMoreImages();
     }
@@ -96,74 +87,88 @@ class _ExplorerState extends State<Explorer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(),
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: images.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : Stack(
-          alignment: Alignment.center,
-          children: [
-            /// BACK CARD
-            if (images.length > 1)
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+
+        // ✅ GO BACK TO HOME TAB INSTEAD OF EXIT
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+
+        // ✅ APP BAR WITH TITLE
+        appBar: const CustomAppBar(
+          title: "Explore",
+        ),
+
+        body: SafeArea(
+          child: images.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : Stack(
+            alignment: Alignment.center,
+            children: [
+              // BACK CARD
+              if (images.length > 1)
+                Positioned(
+                  child: _buildCard(images[1], scale: 0.95),
+                ),
+
+              // FRONT CARD
+              GestureDetector(
+                onPanUpdate: _onPanUpdate,
+                onPanEnd: _onPanEnd,
+                child: Transform.translate(
+                  offset: Offset(_dragX, _dragY),
+                  child: Transform.rotate(
+                    angle: _dragX * pi / 1800,
+                    child: _buildCard(images[0]),
+                  ),
+                ),
+              ),
+
+              // ❤️ LIKE
               Positioned(
-                child: _buildCard(images[1], scale: 0.95),
-              ),
-
-            /// FRONT CARD
-            GestureDetector(
-              onPanUpdate: _onPanUpdate,
-              onPanEnd: _onPanEnd,
-              child: Transform.translate(
-                offset: Offset(_dragX, _dragY),
-                child: Transform.rotate(
-                  angle: _dragX * pi / 1800,
-                  child: _buildCard(images[0]),
-                ),
-              ),
-            ),
-
-            /// ❤️ LIKE ICON
-            Positioned(
-              top: 80,
-              left: 30,
-              child: Opacity(
-                opacity: _dragX < -40 ? 1 : 0,
-                child: Transform.scale(
-                  scale: min(_dragX.abs() / 100, 1.5),
-                  child: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                    size: 60,
+                top: 80,
+                left: 30,
+                child: Opacity(
+                  opacity: _dragX < -40 ? 1 : 0,
+                  child: Transform.scale(
+                    scale: min(_dragX.abs() / 100, 1.5),
+                    child: const Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                      size: 60,
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            /// ❌ DISLIKE ICON
-            Positioned(
-              top: 80,
-              right: 30,
-              child: Opacity(
-                opacity: _dragX > 40 ? 1 : 0,
-                child: Transform.scale(
-                  scale: min(_dragX.abs() / 100, 1.5),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.red,
-                    size: 60,
+              // ❌ DISLIKE
+              Positioned(
+                top: 80,
+                right: 30,
+                child: Opacity(
+                  opacity: _dragX > 40 ? 1 : 0,
+                  child: Transform.scale(
+                    scale: min(_dragX.abs() / 100, 1.5),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.red,
+                      size: 60,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  /// 🔥 FULL SCREEN CARD
+  // ================= CARD UI =================
   Widget _buildCard(String imagePath, {double scale = 1}) {
     final size = MediaQuery.of(context).size;
 
